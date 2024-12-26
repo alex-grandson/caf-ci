@@ -1,3 +1,3 @@
 #!/bin/sh
 make build-clang
-make clean
+rm -rf llvm-project
