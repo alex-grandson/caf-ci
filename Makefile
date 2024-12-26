@@ -23,7 +23,7 @@ llvm-project:
 build-clang: llvm-project
 	docker build -f docker/clang-build.dockerfile -t llvm-builder .
 	docker run --rm -v $(PWD)/$(LLVM_PROJ):/src llvm-builder
-	mkdir -p $(ARTIFACTS)/{clang,stress-ng}/$(CLANG_VERSION)
+	mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
 	cp $(LLVM_PROJ)/build/bin/clang-20 $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang
 	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
@@ -36,7 +36,7 @@ stress-ng:
 build-stress-ng: stress-ng
 	docker build -f docker/stress-ng-build.dockerfile -t stress-ng-builder .
 	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src stress-ng-builder
-	mkdir -p $(ARTIFACTS)/{clang,stress-ng}/$(STRESSNG_VER)
+	mkdir -p $(ARTIFACTS)/stress-ng/$(STRESSNG_VER)
 	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ)
 	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
