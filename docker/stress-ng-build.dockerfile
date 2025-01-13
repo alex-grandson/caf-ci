@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
     libatomic1 \
     libipsec-mb-dev \
     # disable libc download when ger rid of problems with sysroot
-    libc6-dev \
+    # libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # uncomment when ger rid of problems with sysroot

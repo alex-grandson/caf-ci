@@ -1,8 +1,8 @@
-OUTDIR              = build
+OUTDIR              			= build
 PROJECT							= clang
 LLVM_PROJ						= llvm-project
 ARTIFACTS						= /data/artifacts
-CLANG_VERSION				= $(shell ls -l /data/clang | wc -l)
+CLANG_VERSION					= $(shell ls -l /data/clang | wc -l)
 REMOTE							= root@77.221.151.187
 # LICHIE							= root@ip-addr
 
@@ -18,16 +18,16 @@ clean:
 
 
 llvm-project:
-	git clone https://github.com/llvm/llvm-project.git --depth 1 $(LLVM_PROJ)
+	git clone git@github.com:Compiler-assisted-fuzzing/llvm-project.git --depth 1 $(LLVM_PROJ)
 
 build-clang: llvm-project
 	docker build -f docker/clang-build.dockerfile -t llvm-builder .
 	docker run --rm -v $(PWD)/$(LLVM_PROJ):/src llvm-builder
-	mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
-	cp $(LLVM_PROJ)/build/bin/clang-20 $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang
-	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
+# mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
+# cp $(LLVM_PROJ)/build/bin/clang-20 $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang
+# ssh $(REMOTE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
-	scp $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang $(REMOTE):$(ARTIFACTS)/clang/$(CLANG_VERSION)
+# scp $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang $(REMOTE):$(ARTIFACTS)/clang/$(CLANG_VERSION)
 # scp $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang $(LICHIE):$(ARTIFACTS)/clang/$(CLANG_VERSION)
 
 stress-ng:

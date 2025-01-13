@@ -16,15 +16,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # WORKDIR /src
-# RUN git clone https://github.com/llvm/llvm-project.git --depth 1 /src
+# RUN git clone https://github.com/Compiler-assisted-fuzzing/llvm-project.git --depth 1 /src
 
 WORKDIR /src/build
 
 CMD cmake -G Ninja \
       -DLLVM_ENABLE_PROJECTS="clang" \
       -DCMAKE_BUILD_TYPE=Release \
-      -DLLVM_TARGETS_TO_BUILD="X86" \
+      -DCMAKE_INSTALL_PREFIX=../install-llvm \
+      -DLLVM_TARGETS_TO_BUILD="RISCV" \
       -DLLVM_BUILD_EXAMPLES=OFF \
       -DLLVM_BUILD_TESTS=OFF \
       ../llvm \
-    && ninja
+    && ninja -j4 \
+    && ninja install
