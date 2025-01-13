@@ -18,7 +18,7 @@ clean:
 
 
 llvm-project:
-	git clone git@github.com:Compiler-assisted-fuzzing/llvm-project.git --depth 1 $(LLVM_PROJ)
+	git clone https://github.com/Compiler-assisted-fuzzing/llvm-project.git --depth 1 $(LLVM_PROJ)
 
 build-clang: llvm-project
 	docker build -f docker/clang-build.dockerfile -t llvm-builder .
