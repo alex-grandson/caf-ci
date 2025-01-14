@@ -15,15 +15,6 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-RUN export CFLAGS="--target=riscv64-unknown-linux-gnu \
-                    --gcc-toolchain=/gcc \
-                    --sysroot=/gcc/sysroot/ \
-                    --fuzz=all"
-
-RUN export CC="/artifacts/clang"
-
-RUN export CXX="/artifacts/clang"
-
 WORKDIR /src
 
-CMD STATIC=1 make -j$(nproc)
+CMD make STATIC=1 CFLAGS="--target=riscv64-unknown-linux-gnu --gcc-toolchain=/gcc --sysroot=/gcc/sysroot/ --fuzz=all" CC="/artifacts/clang" -j$(nproc)
