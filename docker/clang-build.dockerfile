@@ -28,5 +28,5 @@ CMD cmake -G Ninja \
       -DLLVM_BUILD_EXAMPLES=OFF \
       -DLLVM_BUILD_TESTS=OFF \
       ../llvm \
-    && ninja -j4 \
+    && ninja -j16 || { echo 'Ninja build failed'; exit 1; } \
     && ninja install
