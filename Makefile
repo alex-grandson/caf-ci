@@ -3,7 +3,7 @@ PROJECT							= clang
 LLVM_PROJ						= llvm-project
 ARTIFACTS						= /data/artifacts
 CLANG_VERSION = $(shell if [ -d $(ARTIFACTS)/clang ]; then ls -l $(ARTIFACTS)/clang | wc -l; else echo 0; fi)
-CLANG_PAST_VER = $(ls -1 /data/artifacts/clang | sort -n | tail -n 1)
+CLANG_PAST_VER = $(shell ls -1 $(ARTIFACTS)/clang | sort -n | tail -n 1)
 REMOTE							= root@77.221.151.187
 # LICHIE							= root@ip-addr
 
