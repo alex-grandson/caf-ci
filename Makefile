@@ -7,7 +7,7 @@ REMOTE							= root@77.221.151.187
 # LICHIE							= root@ip-addr
 
 STRESSNG_PROJ				= stress-ng
-STRESSNG_VER				= $(shell ls -l /data/stress-ng | wc -l)
+STRESSNG_VER = $(shell if [ -d $(ARTIFACTS)/stress-ng ]; then ls -l $(ARTIFACTS)/stress-ng | wc -l; else echo 0; fi)
 
 .PHONY: build clean build-clang
 
@@ -35,8 +35,9 @@ stress-ng:
 build-stress-ng: stress-ng
 	docker build -f docker/stress-ng-build.dockerfile -t stress-ng-builder .
 	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src -v /root/semaphore/riscv-gcc/:/gcc -v $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang:/artifacts/clang stress-ng-builder
-# mkdir -p $(ARTIFACTS)/stress-ng/$(STRESSNG_VER)
-# cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ)
+	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
+	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ)
+	rm -rf $(STRESSNG_PROJ)
 # ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
 # scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)

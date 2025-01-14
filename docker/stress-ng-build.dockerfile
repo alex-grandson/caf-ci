@@ -13,19 +13,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     software-properties-common \
     pkg-config \
-    zlib1g-dev \
-    libbsd-dev \
-    libattr1-dev  \
-    libkeyutils-dev \
-    libapparmor-dev \
-    apparmor \
-    libaio-dev \
-    libcap-dev \
-    libsctp-dev \
-    libgcrypt20-dev \
-    libjudy-dev \
-    libatomic1 \
-    libipsec-mb-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN export CFLAGS="--target=riscv64-unknown-linux-gnu \
