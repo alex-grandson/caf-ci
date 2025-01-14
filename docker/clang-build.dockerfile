@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /src/build
 
 CMD cmake -G Ninja \
-      -DLLVM_ENABLE_PROJECTS="clang;lld;compiler-rt" \
+      -DLLVM_ENABLE_PROJECTS="clang;lld" \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=../install-llvm \
       -DLLVM_TARGETS_TO_BUILD="RISCV" \
