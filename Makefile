@@ -34,11 +34,12 @@ stress-ng:
 
 build-stress-ng: stress-ng
 	docker build -f docker/stress-ng-build.dockerfile -t stress-ng-builder .
-	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src -v /root/semaphore/riscv-gcc/:/gcc -v $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang:/artifacts/clang stress-ng-builder
-	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
-	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ)
-	rm -rf $(STRESSNG_PROJ)
-# ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
+	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src -v /root/semaphore/riscv-gcc/:/gcc -v $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang:/artifacts/clang stress-ng-builder || exit 1
+	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
+	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) || exit 1
+	rm -rf $(STRESSNG_PROJ) || exit 1
+# Transfer to msk mirror
+	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
+	scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
-# scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
 # scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
