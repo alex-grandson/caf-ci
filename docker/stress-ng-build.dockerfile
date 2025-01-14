@@ -26,16 +26,17 @@ RUN apt-get update && apt-get install -y \
     libjudy-dev \
     libatomic1 \
     libipsec-mb-dev \
-    # disable libc download when ger rid of problems with sysroot
-    # libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# uncomment when ger rid of problems with sysroot
-# COPY llvm-project/build/bin/clang-20 /usr/bin/
-# COPY llvm-project/build/lib/clang/20/include /usr/include/
+RUN export CFLAGS="--target=riscv64-unknown-linux-gnu \
+                    --gcc-toolchain=/gcc \
+                    --sysroot=/gcc/sysroot/ \
+                    --fuzz=all"
+
+RUN export CC="/artifacts/clang"
+
+RUN export CXX="/artifacts/clang"
 
 WORKDIR /src
 
-CMD STATIC=1 TARGET=x86-64 make -j $(nproc)
-#
-# CMD make clean && STATIC=1 CC=clang-20 CXX=clang-20 make -j $(nproc)
+CMD STATIC=1 make -j$(nproc)
