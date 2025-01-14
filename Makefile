@@ -3,6 +3,7 @@ PROJECT							= clang
 LLVM_PROJ						= llvm-project
 ARTIFACTS						= /data/artifacts
 CLANG_VERSION = $(shell if [ -d $(ARTIFACTS)/clang ]; then ls -l $(ARTIFACTS)/clang | wc -l; else echo 0; fi)
+CLANG_PAST_VER = $(ls -1 /data/artifacts/clang | sort -n | tail -n 1)
 REMOTE							= root@77.221.151.187
 # LICHIE							= root@ip-addr
 
@@ -33,9 +34,9 @@ stress-ng:
 	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
 
 build-stress-ng: stress-ng
-	chmod -R 755 $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang
+	chmod -R 755 $(ARTIFACTS)/clang/$(CLANG_PAST_VER)/clang
 	docker build -f docker/stress-ng-build.dockerfile -t stress-ng-builder .
-	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src -v /root/semaphore/riscv-gcc/:/gcc -v $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang:/artifacts/clang --user $(id -u):$(id -g) stress-ng-builder || exit 1
+	docker run --rm -v $(PWD)/$(STRESSNG_PROJ):/src -v /root/semaphore/riscv-gcc/:/gcc -v $(ARTIFACTS)/clang/$(CLANG_PAST_VER)/clang:/artifacts/clang --user $(id -u):$(id -g) stress-ng-builder || exit 1
 	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) || exit 1
 	rm -rf $(STRESSNG_PROJ) || exit 1
