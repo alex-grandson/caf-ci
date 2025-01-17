@@ -17,6 +17,6 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /src
 
-RUN ls /gcc/
+CMD ls /gcc/
 
-CMD make STATIC=1 CFLAGS="--target=riscv64-unknown-linux-gnu --gcc-toolchain=/gcc --sysroot=/gcc/sysroot/ --fuzz=all" CC="/artifacts/clang" -j$(nproc)
+# CMD make CFLAGS="--target=riscv64-unknown-linux-gnu --gcc-toolchain=/gcc --sysroot=/gcc/sysroot --fuzz=all"
