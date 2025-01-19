@@ -20,7 +20,7 @@ CLANGXX := $(CLANG)++
 
 LICHIE_COMMAND=ssh -J root@77.221.151.187 debian@10.8.0.2
 
-.PHONY: build clean build-clang
+.PHONY: build clean build-clang build-stress-ng kill-stress-ng
 
 clean:
 	rm -rf $(OUTDIR)
@@ -57,3 +57,6 @@ build-stress-ng: clean
 # Transfer to lichee
 	scp -o ProxyJump=$(REMOTE) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):/home/debian || exit 1
 	$(LICHIE_COMMAND) './run.sh'
+
+kill-stress-ng:
+	$(LICHIE_COMMAND) 'kill -9 $(pgrep stress-ng)'
