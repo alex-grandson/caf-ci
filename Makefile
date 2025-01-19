@@ -36,7 +36,7 @@ build-clang: llvm-project
 	docker build -f docker/clang-build.dockerfile -t llvm-builder . || exit 1
 	docker run --rm -v $(PWD)/$(LLVM_PROJ):/src llvm-builder || exit 1
 	mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
-	cp $(LLVM_PROJ)/install-llvm/bin/clang $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang || exit 1
+	cp $(LLVM_PROJ)/build/bin/clang $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang || exit 1
 # Transfer to msk mirror
 	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION) || exit 1
 	scp $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang $(REMOTE):$(ARTIFACTS)/clang/$(CLANG_VERSION) || exit 1
@@ -45,7 +45,7 @@ stress-ng:
 	rm -rf $(STRESSNG_PROJ)
 	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
 
-CFLAGS := --fseed=$(SEED) --fuzz=bpu --target=$(TARGET) --gcc-toolchain=$(TOOLCHAIN) --sysroot=$(SYSROOT)
+CFLAGS := --fseed=$(SEED) -O0 -fno-pic --fuzz=all --target=$(TARGET) --gcc-toolchain=$(TOOLCHAIN) --sysroot=$(SYSROOT)
 CC := $(CLANG)
 CXX := $(CLANGXX) -v
 STATIC := 1
@@ -60,5 +60,3 @@ build-stress-ng: stress-ng
 # Transfer to lichee
 	scp -o ProxyJump=$(REMOTE) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):/home/debian || exit 1
 	$(LICHIE_COMMAND) './run.sh'
-# ssh $(LICHIE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
-# scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
