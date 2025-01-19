@@ -27,12 +27,8 @@ clean:
 	rm -rf $(STRESSNG_PROJ)
 	rm -rf $(LLVM_PROJ)
 
-
-llvm-project:
-	rm -rf $(LLVM_PROJ)
+build-clang: clean
 	git clone https://github.com/Compiler-assisted-fuzzing/llvm-project.git --depth 1 $(LLVM_PROJ)
-
-build-clang: llvm-project
 	docker build -f docker/clang-build.dockerfile -t llvm-builder . || exit 1
 	docker run --rm -v $(PWD)/$(LLVM_PROJ):/src llvm-builder || exit 1
 	mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION)
