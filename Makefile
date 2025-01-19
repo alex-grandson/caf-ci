@@ -10,6 +10,14 @@ REMOTE							= root@77.221.151.187
 STRESSNG_PROJ				= stress-ng
 STRESSNG_VER = $(shell if [ -d $(ARTIFACTS)/stress-ng ]; then ls -l $(ARTIFACTS)/stress-ng | wc -l; else echo 0; fi)
 
+# Generate a random SEED
+SEED := $(shell python3 -c "import random; print(random.randint(1, 2**64 - 1))")
+TARGET := riscv64-unknown-linux-gnu
+TOOLCHAIN := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/sc-dt/riscv-gcc
+SYSROOT := $(TOOLCHAIN)/sysroot
+CLANG := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/clang
+CLANGXX := $(CLANG)++
+
 .PHONY: build clean build-clang
 
 clean:
@@ -33,14 +41,13 @@ build-clang: llvm-project
 stress-ng:
 	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
 
-GCC_TOOLCHAIN = /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/sc-dt/riscv-gcc
-LLVM_BIN	  = /root/semaphore/tmp/repository_1_1/llvm-project/build/bin
+CFLAGS := --fseed=$(SEED) --fuzz=bpu --target=$(TARGET) --gcc-toolchain=$(TOOLCHAIN) --sysroot=$(SYSROOT)
+CC := $(CLANG)
+CXX := $(CLANGXX) -v
+STATIC := 1
 
 build-stress-ng: stress-ng
-	docker build --build-arg SEED=$$(python3 -c "import random; print(random.randint(1, 2**64 - 1))") \
-	--build-arg FUZZ=bpu \
-	-f docker/stress-ng-build.dockerfile -t stress-ng-builder . || exit 1
-	docker run --rm -v $(STRESSNG_PROJ):/src -v $(GCC_TOOLCHAIN):/src/gcc -v $(LLVM_BIN):/src/llvm/bin stress-ng-builder
+	CFLAGS="$(CFLAGS)" CC="$(CC)" CXX="$(CXX)" STATIC="$(STATIC)" $(MAKE) -j12
 	rm -rf $(STRESSNG_PROJ)
 
 # mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
