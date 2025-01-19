@@ -40,7 +40,7 @@ build-stress-ng: stress-ng
 	docker build --build-arg SEED=$$(python3 -c "import random; print(random.randint(1, 2**64 - 1))") \
 	--build-arg FUZZ=bpu \
 	-f docker/stress-ng-build.dockerfile -t stress-ng-builder . || exit 1
-	docker run --rm -v $(GCC_TOOLCHAIN):/src/gcc -v $(LLVM_BIN):/src/llvm/bin stress-ng-builder
+	docker run --rm -v $(STRESSNG_PROJ):/src -v $(GCC_TOOLCHAIN):/src/gcc -v $(LLVM_BIN):/src/llvm/bin stress-ng-builder
 	rm -rf $(STRESSNG_PROJ)
 
 # mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
