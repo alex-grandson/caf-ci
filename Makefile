@@ -13,7 +13,7 @@ STRESSNG_VER = $(shell if [ -d $(ARTIFACTS)/stress-ng ]; then ls -l $(ARTIFACTS)
 # Generate a random SEED
 SEED := $(shell python3 -c "import random; print(random.randint(1, 2**64 - 1))")
 TARGET := riscv64-unknown-linux-gnu
-TOOLCHAIN := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/sc-dt/riscv-gcc
+TOOLCHAIN := /root/semaphore/tmp/sc-dt/riscv-gcc
 SYSROOT := $(TOOLCHAIN)/sysroot
 CLANG := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/clang
 CLANGXX := $(CLANG)++
