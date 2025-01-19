@@ -37,9 +37,9 @@ GCC_TOOLCHAIN = /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/sc-dt/
 LLVM_BIN	  = /root/semaphore/tmp/repository_1_1/llvm-project/build/bin
 
 build-stress-ng: stress-ng
-	docker build --build-arg SEED=$(python3 -c "import random; print(random.randint(1, 2**64 - 1))") \
-    --build-arg FUZZ=bpu \
-    -f docker/stress-ng-build.dockerfile -t stress-ng-builder .
+	docker build --build-arg SEED=$$(python3 -c "import random; print(random.randint(1, 2**64 - 1))") \
+	--build-arg FUZZ=bpu \
+  	-f docker/stress-ng-build.dockerfile -t stress-ng-builder .
 
 	docker run --rm -v $(GCC_TOOLCHAIN):/src/gcc -v ${LLVM_BIN}:/src/llvm/bin stress-ng-builder || exit 1
 
