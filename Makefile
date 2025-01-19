@@ -59,4 +59,4 @@ build-stress-ng: clean
 	$(LICHIE_COMMAND) './run.sh'
 
 kill-stress-ng:
-	$(LICHIE_COMMAND) 'kill -9 $(pgrep stress-ng)'
+	$(LICHIE_COMMAND) 'kill -9 \$(pgrep stress-ng)'
