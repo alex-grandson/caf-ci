@@ -39,13 +39,12 @@ LLVM_BIN	  = /root/semaphore/tmp/repository_1_1/llvm-project/build/bin
 build-stress-ng: stress-ng
 	docker build --build-arg SEED=$$(python3 -c "import random; print(random.randint(1, 2**64 - 1))") \
 	--build-arg FUZZ=bpu \
-  	-f docker/stress-ng-build.dockerfile -t stress-ng-builder .
-
+  	-f docker/stress-ng-build.dockerfile -t stress-ng-builder . || exit 1
 	docker run --rm -v $(GCC_TOOLCHAIN):/src/gcc -v ${LLVM_BIN}:/src/llvm/bin stress-ng-builder || exit 1
+	rm -rf $(STRESSNG_PROJ) || exit 1
 
 # mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 # cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) || exit 1
-	rm -rf $(STRESSNG_PROJ) || exit 1
 # Transfer to msk mirror
 # ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 # scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
