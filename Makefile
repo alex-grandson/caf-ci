@@ -5,7 +5,7 @@ ARTIFACTS						= /data/artifacts
 CLANG_VERSION = $(shell if [ -d $(ARTIFACTS)/clang ]; then ls -l $(ARTIFACTS)/clang | wc -l; else echo 0; fi)
 CLANG_PAST_VER = $(shell ls -1 $(ARTIFACTS)/clang | sort -n | tail -n 1)
 REMOTE							= root@77.221.151.187
-# LICHIE							= root@ip-addr
+LICHIE							= debian@10.8.0.2
 
 STRESSNG_PROJ				= stress-ng
 STRESSNG_VER = $(shell if [ -d $(ARTIFACTS)/stress-ng ]; then ls -l $(ARTIFACTS)/stress-ng | wc -l; else echo 0; fi)
@@ -17,6 +17,8 @@ TOOLCHAIN := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/sc-dt/ris
 SYSROOT := $(TOOLCHAIN)/sysroot
 CLANG := /root/semaphore/tmp/repository_1_1/llvm-project/build/bin/clang
 CLANGXX := $(CLANG)++
+
+LICHIE_COMMAND=ssh -J root@77.221.151.187 debian@10.8.0.2
 
 .PHONY: build clean build-clang
 
@@ -49,11 +51,14 @@ CXX := $(CLANGXX) -v
 STATIC := 1
 
 build-stress-ng: stress-ng
-	CFLAGS="$(CFLAGS)" CC="$(CC)" CXX="$(CXX)" STATIC="$(STATIC)" $(MAKE) -C $(STRESSNG_PROJ) -j12
+	CFLAGS="$(CFLAGS)" CC="$(CC)" CXX="$(CXX)" STATIC="$(STATIC)" $(MAKE) -C $(STRESSNG_PROJ) -j10
 	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) || exit 1
 # Transfer to msk mirror
 	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 	scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
+# Transfer to lichee
+	scp -o ProxyJump=$(REMOTE) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):/home/debian || exit 1
+	$(LICHIE_COMMAND) './run.sh'
 # ssh $(LICHIE) mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
 # scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)
