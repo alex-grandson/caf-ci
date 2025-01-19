@@ -52,7 +52,7 @@ build-stress-ng: clean
 	scp $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(REMOTE):$(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 # Transfer to lichee
 	scp -o ProxyJump=$(REMOTE) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):/home/debian || exit 1
-	$(LICHIE_COMMAND) './run.sh'
+	$(LICHIE_COMMAND) './run.sh' &
 
 kill-stress-ng:
 	$(LICHIE_COMMAND) 'kill -9 \$(pgrep stress-ng)'
