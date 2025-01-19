@@ -42,7 +42,10 @@ CC := $(CLANG)
 CXX := $(CLANGXX) -v
 STATIC := 1
 
-build-stress-ng: clean
+kill-stress-ng:
+	$(LICHIE_COMMAND) './kill.sh' &
+
+build-stress-ng: clean kill-stress-ng
 	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
 	CFLAGS="$(CFLAGS)" CC="$(CC)" CXX="$(CXX)" STATIC="$(STATIC)" $(MAKE) -C $(STRESSNG_PROJ) -j10
 	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
@@ -53,6 +56,3 @@ build-stress-ng: clean
 # Transfer to lichee
 	scp -o ProxyJump=$(REMOTE) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) $(LICHIE):/home/debian || exit 1
 	$(LICHIE_COMMAND) './run.sh' &
-
-kill-stress-ng:
-	$(LICHIE_COMMAND) './kill.sh' &
