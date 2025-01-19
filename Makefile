@@ -41,16 +41,13 @@ build-clang: llvm-project
 	ssh $(REMOTE) mkdir -p $(ARTIFACTS)/clang/$(CLANG_VERSION) || exit 1
 	scp $(ARTIFACTS)/clang/$(CLANG_VERSION)/clang $(REMOTE):$(ARTIFACTS)/clang/$(CLANG_VERSION) || exit 1
 
-stress-ng:
-	rm -rf $(STRESSNG_PROJ)
-	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
-
 CFLAGS := --fseed=$(SEED) -O0 -fno-pic --fuzz=all --target=$(TARGET) --gcc-toolchain=$(TOOLCHAIN) --sysroot=$(SYSROOT)
 CC := $(CLANG)
 CXX := $(CLANGXX) -v
 STATIC := 1
 
-build-stress-ng: stress-ng
+build-stress-ng: clean
+	git clone https://github.com/Compiler-assisted-fuzzing/stress-ng.git --depth 1 $(STRESSNG_PROJ)
 	CFLAGS="$(CFLAGS)" CC="$(CC)" CXX="$(CXX)" STATIC="$(STATIC)" $(MAKE) -C $(STRESSNG_PROJ) -j10
 	mkdir -p $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER) || exit 1
 	cp $(STRESSNG_PROJ)/$(STRESSNG_PROJ) $(ARTIFACTS)/$(STRESSNG_PROJ)/$(STRESSNG_VER)/$(STRESSNG_PROJ) || exit 1
