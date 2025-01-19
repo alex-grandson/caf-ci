@@ -2,6 +2,7 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Установка необходимых зависимостей
 RUN apt-get update && apt-get install -y \
     git \
     cmake \
@@ -15,8 +16,16 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
+# Объявление переменных аргументов для параметризации
+ARG SEED=1737299106422640664
+ARG FUZZ=bpu
+
+# Рабочая директория
 WORKDIR /src
 
-CMD ls /gcc/
-
-# CMD make CFLAGS="--target=riscv64-unknown-linux-gnu --gcc-toolchain=/gcc --sysroot=/gcc/sysroot --fuzz=all"
+# Указание команды с использованием аргументов
+CMD CFLAGS="--fseed=${SEED} --fuzz=${FUZZ} --target=riscv64-unknown-linux-gnu \
+    --gcc-toolchain=/src/gcc \
+    --sysroot=/src/gcc/sysroot" \
+    CC="/src/llvm/bin/clang" \
+    CXX="/src/llvm/bin/clang++ -v" STATIC=1 make -j12
