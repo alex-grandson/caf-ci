@@ -18,15 +18,17 @@ RUN apt-get update && apt-get install -y \
 # WORKDIR /src
 # RUN git clone https://github.com/Compiler-assisted-fuzzing/llvm-project.git --depth 1 /src
 
-WORKDIR /src/build
+WORKDIR /src
 
-CMD cmake -G Ninja \
-      -DLLVM_ENABLE_PROJECTS="clang;lld" \
-      -DCMAKE_BUILD_TYPE=Release \
-      -DCMAKE_INSTALL_PREFIX=../install-llvm \
-      -DLLVM_TARGETS_TO_BUILD="RISCV" \
-      -DLLVM_BUILD_EXAMPLES=OFF \
-      -DLLVM_BUILD_TESTS=OFF \
-      ../llvm \
-    && ninja -j4 || { echo 'Ninja build failed'; exit 1; } \
-    && ninja install
+CMD  cmake -S llvm/ -B build/ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS=clang \
+      && cmake --build build -j4 || { echo 'Ninja build failed'; exit 1; }
+# CMD cmake -G Ninja \
+#       -DLLVM_ENABLE_PROJECTS=clang \
+#       -DCMAKE_BUILD_TYPE=Release \
+#       -DCMAKE_INSTALL_PREFIX=../install-llvm \
+#       -DLLVM_TARGETS_TO_BUILD="RISCV" \
+#       -DLLVM_BUILD_EXAMPLES=OFF \
+#       -DLLVM_BUILD_TESTS=OFF \
+#       ../llvm \
+#     && ninja -j4 || { echo 'Ninja build failed'; exit 1; } \
+#     && ninja install
